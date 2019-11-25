@@ -62,9 +62,11 @@ Plug 'Yggdroot/LeaderF'
 Plug 'majutsushi/tagbar'
 Plug 'lfv89/vim-interestingwords'
 Plug 'itchyny/vim-cursorword'
+Plug 'ycm-core/YouCompleteMe'
+" invoke it from within Vim using the :YcmGenerateConfig or :CCGenerateConfig commands to generate a config file for the current directory
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 call plug#end()
 
-set nu
 
 cscope add cscope.out
 nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -77,27 +79,80 @@ nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 " @NerdTree
+" -------------------------------------------------------------------------------
+"                                      |
 map <F3> :NERDTreeToggle<CR>
+nnoremap <silent> <leader>nt :NERDTreeToggle<CR>
+"                                      |
+" -------------------------------------------------------------------------------
 
 " @LeaderF
-nnoremap <silent> <leader>f :LeaderfFunction<CR>
-nnoremap <silent> <leader>i :LeaderfFile<CR>
+" -------------------------------------------------------------------------------
+"                                      |
+nnoremap <silent> <leader>fu :LeaderfFunction<CR>
+nnoremap <silent> <leader>fi :LeaderfFile<CR>
+"                                      |
+" -------------------------------------------------------------------------------
 
 " @Tlist
+" -------------------------------------------------------------------------------
+"                                      |
 " Toggle here if use tlist
 " let Tlist_Use_Right_Window=1
 " let Tlist_Auto_Open=1
 " map <F2> :TlistToggle<CR>
+"                                      |
+" -------------------------------------------------------------------------------
 
 " @TagBar
 " Toggle here if use tagbar
 map <F2> :TagbarToggle<CR>
+nnoremap <silent> <leader>tt :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+"                                      |
+" -------------------------------------------------------------------------------
 
 " @vim-interestingwords
+" -------------------------------------------------------------------------------
+"                                      |
 " nnoremap <silent> <leader>k :call InterestingWords('n')<cr>
 " nnoremap <silent> <leader>K :call UncolorAllWords()<cr>
 " nnoremap <silent> n :call WordNavigation('forward')<cr>
 " nnoremap <silent> N :call WordNavigation('backward')<cr>
+"                                      |
+" -------------------------------------------------------------------------------
 
+" @YouCompleteMe
+" -------------------------------------------------------------------------------
+"                                      |
+nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" https://zhuanlan.zhihu.com/p/33046090
+" let g:ycm_add_preview_to_completeopt = 0
+" no need to show code issues
+let g:ycm_show_diagnostics_ui = 0
+" invoke complete key, default is <c-space>, which is conflicts with input method
+" switcher, so change it to ctrl-z
+" set global ycm extra conf file position.
+" let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+" let g:ycm_confirm_extra_conf = 0
+let g:ycm_key_invoke_completion = '<c-z>'
+" 在注释输入中也能补全
+let g:ycm_complete_in_comments = 1
+" 在字符串输入中也能补全
+let g:ycm_complete_in_strings = 1
+" only detect these files
+" let g:ycm_filetype_whitelist = {
+" 			\ "c":1,
+" 			\ "cpp":1,
+" 			\ "objc":1,
+" 			\ "sh":1,
+" 			\ "zsh":1,
+" 			\ "zimbu":1,
+" 			\ }
+"                                      |
+" -------------------------------------------------------------------------------
 
 filetype plugin on
+set number
