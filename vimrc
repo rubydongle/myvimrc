@@ -65,6 +65,10 @@ Plug 'itchyny/vim-cursorword'
 Plug 'ycm-core/YouCompleteMe'
 " invoke it from within Vim using the :YcmGenerateConfig or :CCGenerateConfig commands to generate a config file for the current directory
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+Plug 'liuchengxu/vista.vim'
+Plug 'vim-scripts/taglist.vim'
+Plug 'itchyny/lightline.vim'
+Plug 'mhinz/vim-startify'
 call plug#end()
 
 
@@ -98,15 +102,15 @@ nnoremap <silent> <leader>fi :LeaderfFile<CR>
 " -------------------------------------------------------------------------------
 "                                      |
 " Toggle here if use tlist
-" let Tlist_Use_Right_Window=1
+let Tlist_Use_Right_Window=1
 " let Tlist_Auto_Open=1
-" map <F2> :TlistToggle<CR>
+map <F2> :TlistToggle<CR>
 "                                      |
 " -------------------------------------------------------------------------------
 
 " @TagBar
 " Toggle here if use tagbar
-map <F2> :TagbarToggle<CR>
+map <F8> :TagbarToggle<CR>
 nnoremap <silent> <leader>tt :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
 "                                      |
@@ -151,6 +155,44 @@ let g:ycm_complete_in_strings = 1
 " 			\ "zsh":1,
 " 			\ "zimbu":1,
 " 			\ }
+"                                      |
+" -------------------------------------------------------------------------------
+
+" @vista
+" -------------------------------------------------------------------------------
+"                                      |
+nnoremap <silent> <leader>v :Vista!!	<cr>
+" let g:vista_default_executive = 'ctags'
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+
+" Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
+let g:vista#renderer#enable_icon = 1
+
+" The default icons can't be suitable for all the filetypes, you can extend it as you wish.
+let g:vista#renderer#icons = {
+\   "function": "\uf794",
+\   "variable": "\uf71b",
+\  }
+"                                      |
+" -------------------------------------------------------------------------------
+
+"  @lightline
+" -------------------------------------------------------------------------------
+"                                      |
+" let g:lightline = {
+"      \ 'colorscheme': 'wombat',
+"      \ }
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'readonly', 'filename', 'modified', 'method' ] ]
+      \ },
+      \ 'component_function': {
+      \   'method': 'NearestMethodOrFunction'
+      \ },
+      \ }
+set laststatus=2
 "                                      |
 " -------------------------------------------------------------------------------
 
