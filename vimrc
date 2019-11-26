@@ -69,8 +69,12 @@ Plug 'liuchengxu/vista.vim'
 Plug 'vim-scripts/taglist.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'mhinz/vim-startify'
+Plug 'Yggdroot/indentLine'
+Plug 'tpope/vim-fugitive'
+Plug 'mhinz/vim-signify'
+Plug 'junegunn/gv.vim'
+" Plug 'airblade/vim-gitgutter'
 call plug#end()
-
 
 cscope add cscope.out
 nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -81,6 +85,49 @@ nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
 nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+" @gv.vim
+" -------------------------------------------------------------------------------
+"                                      |
+nnoremap <silent> <leader>gv :GV<CR>
+"                                      |
+" -------------------------------------------------------------------------------
+
+" @vim-signify
+" -------------------------------------------------------------------------------
+"                                      |
+set updatetime=100
+"                                      |
+" -------------------------------------------------------------------------------
+
+" @indentLine
+" -------------------------------------------------------------------------------
+"                                      |
+nnoremap <silent> <leader>it :IndentLinesToggle<CR>
+" let g:indentLine_char='┆'
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+" Vim
+" let g:indentLine_color_term = 239
+"
+" let g:indentLine_concealcursor = 'inc'
+" let g:indentLine_conceallevel = 1
+
+" GVim
+" let g:indentLine_color_gui = '#A4E57E'
+
+" none X terminal
+" let g:indentLine_color_tty_light = 7 " (default: 4)
+" let g:indentLine_color_dark = 1 " (default: 2)
+
+" Background (Vim, GVim)
+let g:indentLine_bgcolor_term = 202
+let g:indentLine_bgcolor_gui = '#FF5F00'
+let g:indentLine_enabled = 0 "可关闭indentLine插件
+"映射到ctrl+i键 
+map <C-i> :IndentLinesToggle<CR>
+
+"                                      |
+" -------------------------------------------------------------------------------
 
 " @NerdTree
 " -------------------------------------------------------------------------------
@@ -104,15 +151,42 @@ nnoremap <silent> <leader>fi :LeaderfFile<CR>
 " Toggle here if use tlist
 let Tlist_Use_Right_Window=1
 " let Tlist_Auto_Open=1
+nnoremap <silent> <leader>tl :TlistToggle<CR>
 map <F2> :TlistToggle<CR>
 "                                      |
 " -------------------------------------------------------------------------------
 
 " @TagBar
 " Toggle here if use tagbar
+" 在tagbar一栏内输入F1可以查看快捷方式：
+"
+" -------- general ----------
+" <CR>: 回车跳到定义位置
+" p: 跳到定义位置，但光标仍然在tagbar原位置
+" P: 打开一个预览窗口显示标签内容，如果在标签处回车跳到vim编辑页面内定义处，则预览窗口关闭
+" <C-N>: 跳到下一个标签页的顶端
+" <C-P>: 跳到上一个（或当前）标签页的顶端
+" <Space>: 底行显示标签原型
+"
+" ---------- Folds ----------
+" + 展开标签内容
+" -  折叠标签内容
+
+" *  展开所有标签
+" = 折叠所有标签
+" o 在折叠与展开间切换，按o键，折叠标签，再按一次o，则展开标签，如此来回切换
+"
+" ---------- Misc -----------
+" s: 切换排序，一次s，则让标签按字典排序，再一次s，则按照文件内出现顺序排序
+" x: 是否展开tagbar标签栏，x展开，再一次x，则缩小标签栏
+" <F1>: 切换快捷键帮助页面，F1一次出现快捷键帮助页面，在一次F1，快捷键帮助页面隐藏。
 map <F8> :TagbarToggle<CR>
-nnoremap <silent> <leader>tt :TagbarToggle<CR>
-let g:tagbar_autofocus = 1
+nnoremap <silent> <leader>tb :TagbarToggle<CR>
+let g:tagbar_autofocus = 1        "这是tagbar一打开，光标即在tagbar页面内，默认在vim打开的文件内
+" key s sort result
+let g:tagbar_sort = 0  
+let g:tagbar_width = 30                                     "设置tagbar的宽度为30列，默认40
+" let g:tagbar_left = 1                                          "让tagbar在页面左侧显示，默认右边
 "                                      |
 " -------------------------------------------------------------------------------
 
@@ -140,7 +214,8 @@ let g:ycm_show_diagnostics_ui = 0
 " switcher, so change it to ctrl-z
 " set global ycm extra conf file position.
 " let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-" let g:ycm_confirm_extra_conf = 0
+let g:ycm_confirm_extra_conf = 0
+" <ctrl-z>
 let g:ycm_key_invoke_completion = '<c-z>'
 " 在注释输入中也能补全
 let g:ycm_complete_in_comments = 1
@@ -149,11 +224,13 @@ let g:ycm_complete_in_strings = 1
 " only detect these files
 " let g:ycm_filetype_whitelist = {
 " 			\ "c":1,
+" 			\ "h":1,
 " 			\ "cpp":1,
+" 			\ "cc":1,
 " 			\ "objc":1,
 " 			\ "sh":1,
 " 			\ "zsh":1,
-" 			\ "zimbu":1,
+" 			\ "java":1,
 " 			\ }
 "                                      |
 " -------------------------------------------------------------------------------
@@ -196,5 +273,61 @@ set laststatus=2
 "                                      |
 " -------------------------------------------------------------------------------
 
-filetype plugin on
+"filetype plugin on
+"set number
+" :set all命令查看状态
 set number
+
+" @indent
+" https://blog.csdn.net/ludonghai715/article/details/5657712
+" kernel
+" :set tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab
+" java
+" :set softtabstop=4 shiftwidth=4 expandtab
+" set noautoindent
+" set nocindent
+" set smartindent
+"
+" 设置缩进宽度
+" set shiftwidth=4
+" set tabstop=4
+" set expandtab
+"
+" 通过以下设置，每次点击Tab键，将增加宽度为8列的Tab缩进。
+" :set tabstop=8
+" :set softtabstop=8
+" :set shiftwidth=8
+" :set noexpandtab
+"
+"使用以下设置，每次点击Tab键，增加的缩进将被转化为4个空格。
+" set smartindent
+" set tabstop=4
+" set softtabstop=4
+" set shiftwidth=4
+" set noexpandtab
+" expandtab选项，用来控制是否将Tab转换为空格
+
+" @粘贴
+" 按<F7>进入PASTE模式
+set pastetoggle=<F7>
+" 这样减少了一个快捷键的占用，使用起来也更方便一些。
+" set paste，然后粘贴，然后再set nopaste
+"
+" 如果gvim启动用dessert颜色集
+"
+let g:iswindows = 0
+let g:islinux = 0
+if(has("win32") || has("win64") || has("win95") || has("win16"))
+    let g:iswindows = 1
+else
+    let g:islinux = 1
+endif
+
+if has("gui_running")
+    colorscheme desert
+    " linux
+    set guifont=Ubuntu\ Mono\ 14
+    " windows
+    " set guifont = Courier:h14
+endif
+
