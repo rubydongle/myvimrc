@@ -69,11 +69,10 @@ Plug 'ryanoasis/vim-devicons'
 " Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 " 美化NERDTree结束
 "
-Plug 'Yggdroot/LeaderF'
 Plug 'lfv89/vim-interestingwords'
 Plug 'itchyny/vim-cursorword'
 
-" Plug 'ycm-core/YouCompleteMe'
+Plug 'ycm-core/YouCompleteMe'
 " invoke it from within Vim using the :YcmGenerateConfig or :CCGenerateConfig commands to generate a config file for the current directory
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 
@@ -92,6 +91,16 @@ Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
 Plug 'junegunn/gv.vim'
 " Plug 'airblade/vim-gitgutter'
+"
+" 搜索
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'Yggdroot/LeaderF'
+
+" 快捷键
+Plug 'skywind3000/quickmenu.vim'
+
+" 自动生成tags
+Plug 'ludovicchabant/vim-gutentags'
 call plug#end()
 
 cscope add cscope.out
@@ -104,6 +113,26 @@ nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
+" @gutentags
+" -------------------------------------------------------------------------------
+"                                      |
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+"                                      |
+" -------------------------------------------------------------------------------
+
 " @airline
 " -------------------------------------------------------------------------------
 "                                      |
@@ -113,6 +142,34 @@ let g:airline#extensions#tabline#left_alt_sep = '>|'
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved' " default jsformatter unique_tail unique_tail_improved
 
 let g:airline_theme='wombat'
+"                                      |
+" -------------------------------------------------------------------------------
+
+" @quickmenu
+" -------------------------------------------------------------------------------
+"                                      |
+" choose a favorite key to show/hide quickmenu
+noremap <silent><F12> :call quickmenu#toggle(0)<cr>
+
+" clear all the items
+call g:quickmenu#reset()
+
+" enable cursorline (L) and cmdline help (H)
+let g:quickmenu_options = "HL"
+
+" new section
+call quickmenu#append("# Git", '')
+" use fugitive to show diff
+call quickmenu#append("git diff", 'Gvdiff', "use fugitive's Gvdiff on current document")
+call quickmenu#append("git status", 'Gstatus', "use fugitive's Gstatus on current document")
+call quickmenu#append("git log", 'Glog', "use fugitive's Glog on current document")
+call quickmenu#append("git blame", 'Gblame', "use fugitive's Gblame on current document")
+
+" new section
+call quickmenu#append("# Misc", '')
+call quickmenu#append("Turn paste %{&paste? 'off':'on'}", "set paste!", "enable/disable paste mode (:set paste!)")
+call quickmenu#append("Turn spell %{&spell? 'off':'on'}", "set spell!", "enable/disable spell check (:set spell!)")
+call quickmenu#append("Function List", "TagbarToggle", "Switch Tagbar on/off")
 "                                      |
 " -------------------------------------------------------------------------------
 
@@ -230,7 +287,7 @@ map <F2> :TlistToggle<CR>
 " x: 是否展开tagbar标签栏，x展开，再一次x，则缩小标签栏
 " <F1>: 切换快捷键帮助页面，F1一次出现快捷键帮助页面，在一次F1，快捷键帮助页面隐藏。
 map <F8> :TagbarToggle<CR>
-nnoremap <silent> <leader>tb :TagbarToggle<CR>
+nnoremap <silent> <leader>tt :TagbarToggle<CR>
 let g:tagbar_autofocus = 1        "这是tagbar一打开，光标即在tagbar页面内，默认在vim打开的文件内
 " key s sort result
 let g:tagbar_sort = 0  
@@ -255,21 +312,37 @@ let g:tagbar_width = 30                                     "设置tagbar的宽�
 nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
 nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
+let g:ycm_key_invoke_completion = '<c-z>'
+set completeopt=menu,menuone
+
+" noremap <c-z> <NOP>
+
+let g:ycm_semantic_triggers =  {
+            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+            \ 'cs,lua,javascript': ['re!\w{2}'],
+            \ }
+
 " https://zhuanlan.zhihu.com/p/33046090
 " let g:ycm_add_preview_to_completeopt = 0
 " no need to show code issues
-let g:ycm_show_diagnostics_ui = 0
+" let g:ycm_show_diagnostics_ui = 0
 " invoke complete key, default is <c-space>, which is conflicts with input method
 " switcher, so change it to ctrl-z
 " set global ycm extra conf file position.
 " let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf = 0
+" let g:ycm_confirm_extra_conf = 0
 " <ctrl-z>
 let g:ycm_key_invoke_completion = '<c-z>'
 " 在注释输入中也能补全
-let g:ycm_complete_in_comments = 1
+" let g:ycm_complete_in_comments = 1
 " 在字符串输入中也能补全
-let g:ycm_complete_in_strings = 1
+" let g:ycm_complete_in_strings = 1
 " only detect these files
 " let g:ycm_filetype_whitelist = {
 " 			\ "c":1,
@@ -287,18 +360,18 @@ let g:ycm_complete_in_strings = 1
 " @vista
 " -------------------------------------------------------------------------------
 "                                      |
-nnoremap <silent> <leader>v :Vista!!	<cr>
+nnoremap <silent> <leader>vt :Vista!!	<cr>
 " let g:vista_default_executive = 'ctags'
-let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+" let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 
 " Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
 let g:vista#renderer#enable_icon = 1
 
 " The default icons can't be suitable for all the filetypes, you can extend it as you wish.
-let g:vista#renderer#icons = {
-\   "function": "\uf794",
-\   "variable": "\uf71b",
-\  }
+" let g:vista#renderer#icons = {
+" \   "function": "\uf794",
+" \   "variable": "\uf71b",
+" \  }
 "                                      |
 " -------------------------------------------------------------------------------
 
@@ -412,3 +485,6 @@ endif
 nnoremap <silent> ct :tabclose<CR>
 nnoremap <silent> nt :tabnext<CR>
 nnoremap <silent> pt :tabprevious<CR>
+nnoremap <silent> lt :tabs<CR>
+
+" 参考：https://www.office68.com/windows/24804.html
