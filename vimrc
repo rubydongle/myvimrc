@@ -360,7 +360,19 @@ let g:ycm_key_invoke_completion = '<c-z>'
 " @vista
 " -------------------------------------------------------------------------------
 "                                      |
-nnoremap <silent> <leader>vt :Vista!!	<cr>
+"install libjansson first
+"$ sudo apt-get install libjansson-dev
+" then compile and install universal-ctags.
+"
+" NOTE: Don't use `sudo apt install ctags`, which will install exuberant-ctags and it's not guaranteed to work with vista.vim.
+"
+" git clone https://github.com/universal-ctags/ctags.git --depth=1
+" cd ctags
+" ./autogen.sh
+" ./configure
+" make
+" sudo make install
+nnoremap <silent> <leader>vt :Vista!!<CR>
 " let g:vista_default_executive = 'ctags'
 " let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 
@@ -489,3 +501,11 @@ nnoremap <silent> pt :tabprevious<CR>
 nnoremap <silent> lt :tabs<CR>
 
 " 参考：https://www.office68.com/windows/24804.html
+"
+" for nvim:
+" In shell
+" ln -s ~/.vim .config/nvim
+" ln -s ~/.vimrc .config/nvim/init.vim
+" if has('nvim')
+"     ...
+" endif
