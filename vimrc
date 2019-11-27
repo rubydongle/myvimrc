@@ -450,7 +450,8 @@ if has("gui_running")
     " linux
     if (g:islinux)
         " set guifont=Ubuntu\ Mono\ 14
-        set guifont=DroidSansMono\ Nerd\ Font\ 14
+        " set guifont=DroidSansMono\ Nerd\ Font\ 14
+        set guifont=UbuntuMono\ Nerd\ Font\ 16
     endif
     " windows
     " set guifont = Courier:h14
