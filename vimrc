@@ -58,16 +58,34 @@ endif
 " curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+" 美化NERDTree
+" 要安装字体Droid Sans Mono Nerd Font
+" https://github.com/ryanoasis/nerd-fonts#patched-fonts
+" https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/DroidSansMono
+" 然后Terminal或guifont设置字体
+Plug 'ryanoasis/vim-devicons'
+" Plug 'jistr/vim-nerdtree-tabs'
+" Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" 美化NERDTree结束
+"
 Plug 'Yggdroot/LeaderF'
-Plug 'majutsushi/tagbar'
 Plug 'lfv89/vim-interestingwords'
 Plug 'itchyny/vim-cursorword'
-Plug 'ycm-core/YouCompleteMe'
+
+" Plug 'ycm-core/YouCompleteMe'
 " invoke it from within Vim using the :YcmGenerateConfig or :CCGenerateConfig commands to generate a config file for the current directory
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+
 Plug 'liuchengxu/vista.vim'
 Plug 'vim-scripts/taglist.vim'
-Plug 'itchyny/lightline.vim'
+Plug 'majutsushi/tagbar'
+
+" 状态 status line
+" Plug 'itchyny/lightline.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
 Plug 'mhinz/vim-startify'
 Plug 'Yggdroot/indentLine'
 Plug 'tpope/vim-fugitive'
@@ -85,6 +103,18 @@ nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
 nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
 nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+" @airline
+" -------------------------------------------------------------------------------
+"                                      |
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = '|'
+let g:airline#extensions#tabline#left_alt_sep = '>|'
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved' " default jsformatter unique_tail unique_tail_improved
+
+let g:airline_theme='wombat'
+"                                      |
+" -------------------------------------------------------------------------------
 
 " @gv.vim
 " -------------------------------------------------------------------------------
@@ -132,8 +162,27 @@ map <C-i> :IndentLinesToggle<CR>
 " @NerdTree
 " -------------------------------------------------------------------------------
 "                                      |
+"https://segmentfault.com/a/1190000015143474
 map <F3> :NERDTreeToggle<CR>
 nnoremap <silent> <leader>nt :NERDTreeToggle<CR>
+
+" autocmd vimenter * NERDTree  "自动开启Nerdtree
+"let g:NERDTreeWinSize = 25 "设定 NERDTree 视窗大小
+"let NERDTreeShowBookmarks=1  " 开启Nerdtree时自动显示Bookmarks
+"打开vim时如果没有文件自动打开NERDTree
+" autocmd vimenter * if !argc()|NERDTree|endif
+"当NERDTree为剩下的唯一窗口时自动关闭
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+"设置树的显示图标
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+" let NERDTreeIgnore = ['\.pyc$', '\.swp']  " 过滤所有.pyc文件不显示
+" let g:NERDTreeShowLineNumbers=1  " 是否显示行号
+" let g:NERDTreeHidden=0     "不显示隐藏文件
+"Making it prettier
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+" 按r按键刷新内容
 "                                      |
 " -------------------------------------------------------------------------------
 
@@ -326,8 +375,40 @@ endif
 if has("gui_running")
     colorscheme desert
     " linux
-    set guifont=Ubuntu\ Mono\ 14
+    if (g:islinux)
+        " set guifont=Ubuntu\ Mono\ 14
+        set guifont=DroidSansMono\ Nerd\ Font\ 14
+    endif
     " windows
     " set guifont = Courier:h14
 endif
 
+" @tab  操作
+" 打开和关闭tab,NerdTree中通过t操作的文件是在tab中打开的
+" :tabe[dit] {file}   edit specified file in a new tab
+" :tabf[ind] {file}   open a new tab with filename given, searching the 'path' to find it
+" :tabc[lose]         close current tab
+" :tabc[lose] {i}     close i-th tab
+" :tabo[nly]          close all other tabs (show only the current tab)
+" 移动标签
+" :tabs         list all tabs including their displayed window
+" :tabm 0       move current tab to first
+" :tabm         move current tab to last
+" :tabm {i}     move current tab to position i+1
+" 跳转标签
+" :tabn         go to next tab
+" :tabp         go to previous tab
+" :tabfirst     go to first tab
+" :tablast      go to last tab
+" 在正常模式（normal）下，还可以使用快捷键：
+" 快捷键！！！
+" gt            go to next tab
+" gT            go to previous tab
+" {i}gt         go to tab in position i
+"
+" noremap <C-L> <Esc>:tabnext<CR>
+" noremap <C-H> <Esc>:tabprevious<CR>
+
+nnoremap <silent> ct :tabclose<CR>
+nnoremap <silent> nt :tabnext<CR>
+nnoremap <silent> pt :tabprevious<CR>
