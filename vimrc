@@ -58,6 +58,7 @@ endif
 " curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+
 " 美化NERDTree
 " 要安装字体Droid Sans Mono Nerd Font
 " https://github.com/ryanoasis/nerd-fonts#patched-fonts
@@ -69,13 +70,16 @@ Plug 'ryanoasis/vim-devicons'
 " Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 " 美化NERDTree结束
 "
+" 高亮单词 k
 Plug 'lfv89/vim-interestingwords'
+" 当前单词下划线
 Plug 'itchyny/vim-cursorword'
 
-Plug 'ycm-core/YouCompleteMe'
+" Plug 'ycm-core/YouCompleteMe'
 " invoke it from within Vim using the :YcmGenerateConfig or :CCGenerateConfig commands to generate a config file for the current directory
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+" Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 
+" 代码函数、变量列表
 Plug 'liuchengxu/vista.vim'
 Plug 'vim-scripts/taglist.vim'
 Plug 'majutsushi/tagbar'
@@ -85,11 +89,14 @@ Plug 'majutsushi/tagbar'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+" 起始页
 Plug 'mhinz/vim-startify'
 Plug 'Yggdroot/indentLine'
+
+" git相关
 Plug 'tpope/vim-fugitive'
-Plug 'mhinz/vim-signify'
 Plug 'junegunn/gv.vim'
+Plug 'mhinz/vim-signify'
 " Plug 'airblade/vim-gitgutter'
 "
 " 搜索
@@ -97,39 +104,96 @@ Plug 'ctrlpvim/ctrlp.vim'
 Plug 'Yggdroot/LeaderF'
 
 " 快捷键
-Plug 'skywind3000/quickmenu.vim'
+" Plug 'skywind3000/quickmenu.vim'
 
-" 自动生成tags
+" 自动生成tags 安装universal-ctags效果更好
 Plug 'ludovicchabant/vim-gutentags'
+
+" 替代cscope
+Plug 'skywind3000/gutentags_plus'
 call plug#end()
 
-cscope add cscope.out
-nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
-nmap <C-_>g :cs find g <C-R>=expand("<cword>")<CR><CR>
-nmap <C-_>c :cs find c <C-R>=expand("<cword>")<CR><CR>
-nmap <C-_>t :cs find t <C-R>=expand("<cword>")<CR><CR>
-nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
-nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
-nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
-nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+" overtimed, now use universal-ctags
+" cscope add cscope.out
+" nmap <C-_>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-_>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-_>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-_>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-_>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-_>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+" nmap <C-_>i :cs find i <C-R>=expand("<cfile>")<CR><CR>
+" nmap <C-_>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 " @gutentags
 " -------------------------------------------------------------------------------
 "                                      |
 " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+let g:gutentags_project_root = [ '.root', '.svn', '.git', '.hg', '.project', 'Makefile', 'build.gradle']
 
+"
 " 所生成的数据文件的名称
 let g:gutentags_ctags_tagfile = '.tags'
-
+"
 " 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
-
+"
 " 配置 ctags 的参数
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+"                                      |
+" -------------------------------------------------------------------------------
+
+" @gutentags_plus
+" -------------------------------------------------------------------------------
+"                                      |
+" enable gtags module
+" let g:gutentags_modules = ['ctags', 'gtags_cscope']
+" 同时开启 ctags 和 gtags 支持：
+"
+let g:gutentags_modules = []
+if executable('ctags')
+    let g:gutentags_modules += ['ctags']
+endif
+
+" apt-get install global-> gtags-cscope、gtags
+if executable('gtags-cscope') && executable('gtags')
+    let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" config project root markers.
+"let g:gutentags_project_root = ['.root']
+
+" generate datebases in my cache directory, prevent gtags files polluting my project
+"let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" change focus to quickfix window after search (optional).
+let g:gutentags_plus_switch = 1
+
+" default keymap
+" keymap	desc
+" <leader>cs	Find symbol (reference) under cursor
+" <leader>cg	Find symbol definition under cursor
+" <leader>cd	Functions called by this function
+" <leader>cc	Functions calling this function
+" <leader>ct	Find text string under cursor
+" <leader>ce	Find egrep pattern under cursor
+" <leader>cf	Find file name under cursor
+" <leader>ci	Find files #including the file name under cursor
+" <leader>ca	Find places where current symbol is assigned
+" let g:gutentags_plus_nomap = 1
+" let g:gutentags_define_advanced_commands = 1
+"nmap             <C-_>s :GscopeFind s <C-R>=expand("<cword>")<CR><CR>
+noremap <silent> <C-_>s :GscopeFind s <C-R><C-W><cr>
+noremap <silent> <C-_>g :GscopeFind g <C-R><C-W><cr>
+noremap <silent> <C-_>c :GscopeFind c <C-R><C-W><cr>
+noremap <silent> <C-_>t :GscopeFind t <C-R><C-W><cr>
+noremap <silent> <C-_>e :GscopeFind e <C-R><C-W><cr>
+noremap <silent> <C-_>f :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <C-_>i :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <C-_>d :GscopeFind d <C-R><C-W><cr>
+noremap <silent> <C-_>a :GscopeFind a <C-R><C-W><cr>
 "                                      |
 " -------------------------------------------------------------------------------
 
@@ -140,7 +204,6 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = '|'
 let g:airline#extensions#tabline#left_alt_sep = '>|'
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved' " default jsformatter unique_tail unique_tail_improved
-
 let g:airline_theme='wombat'
 "                                      |
 " -------------------------------------------------------------------------------
@@ -149,27 +212,27 @@ let g:airline_theme='wombat'
 " -------------------------------------------------------------------------------
 "                                      |
 " choose a favorite key to show/hide quickmenu
-noremap <silent><F12> :call quickmenu#toggle(0)<cr>
-
+" noremap <silent><F12> :call quickmenu#toggle(0)<cr>
+"
 " clear all the items
-call g:quickmenu#reset()
-
+" call g:quickmenu#reset()
+"
 " enable cursorline (L) and cmdline help (H)
-let g:quickmenu_options = "HL"
-
+" let g:quickmenu_options="HL"
+"
 " new section
-call quickmenu#append("# Git", '')
+" call quickmenu#append("# Git", '')
 " use fugitive to show diff
-call quickmenu#append("git diff", 'Gvdiff', "use fugitive's Gvdiff on current document")
-call quickmenu#append("git status", 'Gstatus', "use fugitive's Gstatus on current document")
-call quickmenu#append("git log", 'Glog', "use fugitive's Glog on current document")
-call quickmenu#append("git blame", 'Gblame', "use fugitive's Gblame on current document")
-
+" call quickmenu#append("git diff", 'Gvdiff', "use fugitive's Gvdiff on current document")
+" call quickmenu#append("git status", 'Gstatus', "use fugitive's Gstatus on current document")
+" call quickmenu#append("git log", 'Glog', "use fugitive's Glog on current document")
+" call quickmenu#append("git blame", 'Gblame', "use fugitive's Gblame on current document")
+"
 " new section
-call quickmenu#append("# Misc", '')
-call quickmenu#append("Turn paste %{&paste? 'off':'on'}", "set paste!", "enable/disable paste mode (:set paste!)")
-call quickmenu#append("Turn spell %{&spell? 'off':'on'}", "set spell!", "enable/disable spell check (:set spell!)")
-call quickmenu#append("Function List", "TagbarToggle", "Switch Tagbar on/off")
+" call quickmenu#append("# Misc", '')
+" call quickmenu#append("Turn paste %{&paste? 'off':'on'}", "set paste!", "enable/disable paste mode (:set paste!)")
+" call quickmenu#append("Turn spell %{&spell? 'off':'on'}", "set spell!", "enable/disable spell check (:set spell!)")
+" call quickmenu#append("Function List", "TagbarToggle", "Switch Tagbar on/off")
 "                                      |
 " -------------------------------------------------------------------------------
 
@@ -198,20 +261,21 @@ let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 "
 " let g:indentLine_concealcursor = 'inc'
 " let g:indentLine_conceallevel = 1
-
+"
 " GVim
 " let g:indentLine_color_gui = '#A4E57E'
-
+"
 " none X terminal
 " let g:indentLine_color_tty_light = 7 " (default: 4)
 " let g:indentLine_color_dark = 1 " (default: 2)
-
+"
 " Background (Vim, GVim)
 let g:indentLine_bgcolor_term = 202
 let g:indentLine_bgcolor_gui = '#FF5F00'
 let g:indentLine_enabled = 0 "可关闭indentLine插件
 "映射到ctrl+i键 
-map <C-i> :IndentLinesToggle<CR>
+" maip <C-i> :IndentLinesToggle<CR>
+nnoremap <silent> <leader>it :IndentLinesToggle<CR>
 
 "                                      |
 " -------------------------------------------------------------------------------
@@ -495,10 +559,10 @@ endif
 " noremap <C-L> <Esc>:tabnext<CR>
 " noremap <C-H> <Esc>:tabprevious<CR>
 
-nnoremap <silent> ct :tabclose<CR>
-nnoremap <silent> nt :tabnext<CR>
-nnoremap <silent> pt :tabprevious<CR>
-nnoremap <silent> lt :tabs<CR>
+nnoremap <silent> <leader> ct :tabclose<CR>
+nnoremap <silent> <leader> nt :tabnext<CR>
+nnoremap <silent> <leader> pt :tabprevious<CR>
+nnoremap <silent> <leader> lt :tabs<CR>
 
 " 参考：https://www.office68.com/windows/24804.html
 "
