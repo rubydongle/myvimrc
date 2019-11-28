@@ -111,7 +111,16 @@ Plug 'ludovicchabant/vim-gutentags'
 
 " 替代cscope
 Plug 'skywind3000/gutentags_plus'
+Plug 'skywind3000/vim-preview'
 call plug#end()
+
+" @vim-preview
+" -------------------------------------------------------------------------------
+"                                      |
+autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+"                                      |
+" -------------------------------------------------------------------------------
 
 " overtimed, now use universal-ctags
 " cscope add cscope.out
@@ -127,21 +136,104 @@ call plug#end()
 " @gutentags
 " -------------------------------------------------------------------------------
 "                                      |
+" let g:gutentags_add_default_project_roots = 0
 " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
-let g:gutentags_project_root = [ '.root', '.svn', '.git', '.hg', '.project', 'Makefile', 'build.gradle']
+" let g:gutentags_project_root = [ '.root', '.svn', '.git', '.hg', '.project', 'Makefile', 'build.gradle']
+let g:gutentags_project_root = [ '.git', 'root' ]
 
 "
 " 所生成的数据文件的名称
 let g:gutentags_ctags_tagfile = '.tags'
 "
 " 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
-let s:vim_tags = expand('~/.cache/tags')
+let s:vim_tags = expand('~/.cache/vim/tags')
 let g:gutentags_cache_dir = s:vim_tags
+"let g:gutentags_cache_dir = expand('~/.cache/vim/ctags/')
+command! -nargs=0 GutentagsClearCache call system('rm ' . g:gutentags_cache_dir . '/*')
+"let g:gutentags_generate_on_new = 1
+"let g:gutentags_generate_on_missing = 1
+"let g:gutentags_generate_on_write = 1
+"let g:gutentags_generate_on_empty_buffer = 0
 "
 " 配置 ctags 的参数
+"        --fields=[+|-]flags
+"        Specifies the available extension fields which are to be included in the entries of the tag file (see TAG FILE FORMAT, below, for more information). The parameter flags is a set  of  one-letter  flags,  each
+"        representing one type of extension field to include, with the following meanings (disabled by default unless indicated):
+"
+"           a   Access (or export) of class members
+"           f   File-restricted scoping [enabled]
+"           i   Inheritance information
+"           k   Kind of tag as a single letter [enabled]
+"           K   Kind of tag as full name
+"           l   Language of source file containing tag
+"           m   Implementation information
+"           n   Line number of tag definition
+"           s   Scope of tag definition [enabled]
+"           S   Signature of routine (e.g. prototype or parameter list)
+"           z   Include the "kind:" key in kind field
+"           t   Type and name of a variable or typedef as "typeref:" field [enabled]
+
+"let g:gutentags_ctags_extra_args = ['--tag-relative=yes']
+
+"let g:gutentags_ctags_extra_args += ['--fields=+afikKlmnsSzt']
+"let g:gutentags_ctags_extra_args += ['--fields=+ailmnS']
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+" let g:gutentags_ctags_extra_args += ['--extra=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 如果使用 universal ctags 需要增加下面一行
+" let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+" let g:gutentags_auto_add_gtags_cscope = 0
+let g:gutentags_ctags_exclude = [
+      \ '*.git', '*.svg', '*.hg',
+      \ '*/tests/*',
+      \ 'build',
+      \ 'dist',
+      \ '*sites/*/files/*',
+      \ 'bin',
+      \ 'node_modules',
+      \ 'bower_components',
+      \ 'cache',
+      \ 'compiled',
+      \ 'docs',
+      \ 'example',
+      \ 'bundle',
+      \ 'vendor',
+      \ '*.md',
+      \ '*-lock.json',
+      \ '*.lock',
+      \ '*bundle*.js',
+      \ '*build*.js',
+      \ '.*rc*',
+      \ '*.json',
+      \ '*.min.*',
+      \ '*.map',
+      \ '*.bak',
+      \ '*.zip',
+      \ '*.pyc',
+      \ '*.class',
+      \ '*.sln',
+      \ '*.Master',
+      \ '*.csproj',
+      \ '*.tmp',
+      \ '*.csproj.user',
+      \ '*.cache',
+      \ '*.pdb',
+      \ 'tags*',
+      \ 'cscope.*',
+      \ '*.css',
+      \ '*.less',
+      \ '*.scss',
+      \ '*.exe', '*.dll',
+      \ '*.mp3', '*.ogg', '*.flac',
+      \ '*.swp', '*.swo',
+      \ '*.bmp', '*.gif', '*.ico', '*.jpg', '*.png',
+      \ '*.rar', '*.zip', '*.tar', '*.tar.gz', '*.tar.xz', '*.tar.bz2',
+      \ '*.pdf', '*.doc', '*.docx', '*.ppt', '*.pptx',
+      \ ]
 "                                      |
 " -------------------------------------------------------------------------------
 
@@ -183,7 +275,7 @@ let g:gutentags_plus_switch = 1
 " <leader>ci	Find files #including the file name under cursor
 " <leader>ca	Find places where current symbol is assigned
 " let g:gutentags_plus_nomap = 1
-" let g:gutentags_define_advanced_commands = 1
+let g:gutentags_define_advanced_commands = 1
 "nmap             <C-_>s :GscopeFind s <C-R>=expand("<cword>")<CR><CR>
 noremap <silent> <C-_>s :GscopeFind s <C-R><C-W><cr>
 noremap <silent> <C-_>g :GscopeFind g <C-R><C-W><cr>
