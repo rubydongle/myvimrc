@@ -1,0 +1,72 @@
+" If using a dark background within the editing area and syntax highlighting
+" turn on this option as well
+set background=dark
+
+" Uncomment the following to have Vim jump to the last position when
+" reopening a file
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" Uncomment the following to have Vim load indentation rules and plugins
+" according to the detected filetype.
+filetype plugin indent on
+
+" The following are commented out as they cause vim to behave a lot
+" differently from regular Vi. They are highly recommended though.
+"set showcmd		" Show (partial) command in status line.
+"set showmatch		" Show matching brackets.
+"set ignorecase		" Do case insensitive matching
+"set smartcase		" Do smart case matching
+set incsearch		" Incremental search
+"set autowrite		" Automatically save before commands like :next and :make
+"set hidden		" Hide buffers when they are abandoned
+"set mouse=a		" Enable mouse usage (all modes)
+set nu
+set hlsearch
+set shiftwidth=4
+
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+
+" Make sure you use single quotes
+
+" Code view config
+" On-demand loading
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+map <F3> :NERDTreeToggle<CR>
+Plug 'majutsushi/tagbar', { 'on': 'TagbarToggle' }
+nmap <F8> :TagbarToggle<CR>
+Plug 'ctrlpvim/ctrlp.vim'
+
+" 缩进标线
+Plug 'Yggdroot/indentLine'
+let g:indentLine_noConcealCursor = 1
+let g:indentLine_color_term = 10
+let g:indentLine_bgcolor_term = 239
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
+" 代码注释
+Plug 'preservim/nerdcommenter'
+" 注释的时候自动加个空格
+let g:NERDSpaceDelims=1
+" Plug 'hrp/EnhancedCommentify'
+" let g:EnhCommentifyRespectIndent = 'Yes'
+" let g:EnhCommentifyPretty = 'Yes'
+
+Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
+let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#left_sep = ' '
+" let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline_powerline_fonts = 1
+
+" 设置切换Buffer快捷键"
+" nnoremap <C-N> :bn<CR>
+" nnoremap <C-P> :bp<CR>
+
+
+Plug 'ryanoasis/vim-devicons'
+
+" Initialize plugin system
+call plug#end()
